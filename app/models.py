@@ -15,6 +15,8 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(255))
     email = db.Column(db.String(50),unique=True)
     password_hash = db.Column(db.String(200))
+    user_products = db.relationship('Product',backref = 'user',lazy = "dynamic")
+
     
 
     @property
@@ -36,10 +38,34 @@ class User(UserMixin, db.Model):
 
 class Product(db.Model):
     #properties 
-     __tablename__ = 'products'
-    id = db.Column(db.Integer,primary_key = True)
+    __tablename__ = 'products'
+    product_id = db.Column(db.Integer,primary_key = True)
     product_name = db.Column(db.String(255))
-    product_type = db.Column(db.String(50))
+    product_price = db.Column(db.Integer)
+    product_desc = db.Column(db.String(255))
+    product_img_path = db.Column(db.String(255))
+    user_id = db.Column(db.Integer,db.ForeignKey("users.id"))
+
+
+    def save_products(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+    @classmethod
+    def get_products(cls,id):
+        products = Product.query.filter_by(product_id=id).all()
+        return products
+
+    def __repr__(self):
+        return f'Product {self.product_name}'
+
+
+
+
+
+
+
 
 
 
